@@ -1,9 +1,12 @@
 package com.vet.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 
@@ -12,7 +15,9 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "pet")
 @NoArgsConstructor
-public class PetEntity {
+@SQLRestriction("deleted = false")
+@SQLDelete(sql = "UPDATE pet SET deleted = true WHERE id=?")
+public class PetEntity extends SoftDeletable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,9 +29,9 @@ public class PetEntity {
     private String name;
 
     @Column(nullable = false, length = 50)
-    private String species; // TODO change to ENUM
+    private String specie; // TODO change to ENUM
 
-    @Column(nullable = false, length = 80)
+    @Column(length = 80)
     private String breed;
 
     @Column(nullable = false, length = 20)
@@ -43,5 +48,6 @@ public class PetEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", insertable = false, updatable = false)
+    @JsonIgnore
     private OwnerEntity owner;
 }

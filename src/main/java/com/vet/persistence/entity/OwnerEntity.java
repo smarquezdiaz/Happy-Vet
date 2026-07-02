@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @Entity
 @Table(name = "owner")
 @NoArgsConstructor
+@SQLRestriction("deleted = false")
+@SQLDelete(sql = "UPDATE owner SET deleted = true WHERE id=?")
 public class OwnerEntity {
 
     @Id
